@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1>Websocket Echo Test</h1>
+    <form >
+        <p>
+            Message: <input type="text" id="message" value="Hello World!">
+        </p>
+    </form>
+    <button onclick="send()">Send Message</button>
+
+    <div>
+        <ol id="list">
+
+        </ol>
+    </div>
+    
+</body>
+<script>
+    var sock = null;
+    var wsuri = "ws://127.0.0.1:8080"
+    
+
+    window.onload = () => {
+        console.log("Loading WS...")
+        sock = new WebSocket(wsuri);
+        var item = document.getElementById('list');
+
+        sock.onopen = () => {
+            console.log("Connected...")
+        }
+
+        sock.onclose = (e) => {
+            console.log("Connection closed - ", e.code)
+        }
+
+        sock.onerror = (e) => {
+            console.log(e)
+        }
+
+        sock.onmessage = (e) => {
+            let msg = e.data;
+            let li = document.createElement("li");
+            let textNode = document.createTextNode(msg)
+
+            li.appendChild(textNode)
+
+            item.appendChild(li)
+
+            console.log("Message Received:", e.data)
+        }
+
+    }
+
+    var send = () => {
+        var msg = document.getElementById('message').value;
+        sock.send(msg);
+    }
+
+</script>
+</html>
